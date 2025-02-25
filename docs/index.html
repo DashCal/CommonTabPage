@@ -1,1 +1,157 @@
-TAB BY LOCALWU
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom New Tab Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f5f5f5; /* 极浅灰色背景 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-container input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .time-date {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .night-mode {
+            margin-top: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .night-mode input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+      <select id="search-engine">
+          <option value="google">Google</option>
+          <option value="bing">Bing</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+          <option value="baidu">百度</option> <!-- 添加百度选项 -->
+      </select>
+        <input type="text" id="search-box" placeholder="Search...">
+        <div id="keyword-list"></div>
+        <button onclick="search()">Search</button>
+    </div>
+    <div class="time-date" id="time-date"></div>
+    <div class="night-mode">
+        <input type="checkbox" id="night-mode-toggle">
+        <label for="night-mode-toggle">Night Mode</label>
+    </div>
+
+    <script>
+        // 显示当前时间和日期
+        function updateTimeDate() {
+            const now = new Date();
+            const timeDateElement = document.getElementById('time-date');
+            timeDateElement.textContent = now.toLocaleString();
+        }
+        setInterval(updateTimeDate, 1000); // 每秒更新一次
+
+        // 夜晚模式切换
+        const nightModeToggle = document.getElementById('night-mode-toggle');
+        nightModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.style.backgroundColor = '#1a1a1a';
+                document.body.style.color = '#ffffff';
+            } else {
+                document.body.style.backgroundColor = '#f5f5f5';
+                document.body.style.color = '#000000';
+            }
+        });
+
+        // 搜索功能
+        function search() {
+            const searchEngine = document.getElementById('search-engine').value;
+            const searchQuery = document.getElementById('search-box').value;
+            let searchUrl = '';
+            switch (searchEngine) {
+                case 'google':
+                    searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+                    break;
+                case 'bing':
+                    searchUrl = `https://www.bing.com/search?q=${searchQuery}`;
+                    break;
+                case 'duckduckgo':
+                    searchUrl = `https://duckduckgo.com/?q=${searchQuery}`;
+                    break;
+                case 'baidu': // 添加百度搜索
+                    searchUrl = `https://www.baidu.com/s?wd=${searchQuery}`;
+                    break;
+            }
+            window.open(searchUrl, '_blank');
+        }
+
+      function listenInput() {
+    let current = '';
+    document.getElementById('search-box').addEventListener('input', function(event) {
+        setTimeout(function() {
+            const currentValue = document.getElementById('search-box').value;
+            if (current !== currentValue) {
+                fetchSearchSuggestions(currentValue); // 请求搜索建议
+            }
+            current = currentValue;
+        }, 500); // 延迟500ms，避免频繁请求
+    });
+}
+
+  function fetchSearchSuggestions(query) {
+      // 模拟从API获取搜索建议
+      const suggestions = ['HTML', 'CSS', 'JavaScript', 'Python', 'Java'];
+      const filteredSuggestions = suggestions.filter(suggestion => suggestion.includes(query));
+      renderKeywordList(filteredSuggestions);
+  }
+  
+  function renderKeywordList(suggestions) {
+      const keywordList = document.getElementById('keyword-list');
+      keywordList.innerHTML = '';
+      if (suggestions.length === 0) return;
+  
+      keywordList.style.border = '1px solid #ccc';
+      suggestions.forEach(suggestion => {
+          const div = document.createElement('div');
+          div.textContent = suggestion;
+          div.style.lineHeight = '50px';
+          div.style.cursor = 'pointer';
+          div.addEventListener('click', () => {
+              document.getElementById('search-box').value = suggestion;
+              keywordList.style.border = 'none';
+              keywordList.innerHTML = '';
+          });
+          keywordList.appendChild(div);
+      });
+  }
+  
+  listenInput(); // 监听输入框变化
+    </script>
+</body>
+</html>
