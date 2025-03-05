@@ -63,6 +63,7 @@
         <button onclick="search()">Search</button>
     </div>
     <div class="time-date" id="time-date"></div>
+    <div id="countdown"></div>
     <div class="night-mode">
         <input type="checkbox" id="night-mode-toggle">
         <label for="night-mode-toggle">Night Mode</label>
@@ -71,14 +72,14 @@
     <script>
         // 显示当前时间和日期
         function updateTimeDate() {
-            const now = new Date();
-            const timeDateElement = document.getElementById('time-date');
+            let now = new Date();
+            let timeDateElement = document.getElementById('time-date');
             timeDateElement.textContent = now.toLocaleString();
         }
         setInterval(updateTimeDate, 1000); // 每秒更新一次
 
         // 夜晚模式切换
-        const nightModeToggle = document.getElementById('night-mode-toggle');
+        let nightModeToggle = document.getElementById('night-mode-toggle');
         nightModeToggle.addEventListener('change', function() {
             if (this.checked) {
                 document.body.style.backgroundColor = '#1a1a1a';
@@ -91,8 +92,8 @@
 
         // 搜索功能
         function search() {
-            const searchEngine = document.getElementById('search-engine').value;
-            const searchQuery = document.getElementById('search-box').value;
+            let searchEngine = document.getElementById('search-engine').value;
+            let searchQuery = document.getElementById('search-box').value;
             let searchUrl = '';
             switch (searchEngine) {
                 case 'google':
@@ -115,7 +116,7 @@
     let current = '';
     document.getElementById('search-box').addEventListener('input', function(event) {
         setTimeout(function() {
-            const currentValue = document.getElementById('search-box').value;
+            let currentValue = document.getElementById('search-box').value;
             if (current !== currentValue) {
                 fetchSearchSuggestions(currentValue); // 请求搜索建议
             }
@@ -126,19 +127,19 @@
 
   function fetchSearchSuggestions(query) {
       // 模拟从API获取搜索建议
-      const suggestions = ['HTML', 'CSS', 'JavaScript', 'Python', 'Java'];
-      const filteredSuggestions = suggestions.filter(suggestion => suggestion.includes(query));
+      let suggestions = ['HTML', 'CSS', 'JavaScript', 'Python', 'Java'];
+      let filteredSuggestions = suggestions.filter(suggestion => suggestion.includes(query));
       renderKeywordList(filteredSuggestions);
   }
   
   function renderKeywordList(suggestions) {
-      const keywordList = document.getElementById('keyword-list');
+      let keywordList = document.getElementById('keyword-list');
       keywordList.innerHTML = '';
       if (suggestions.length === 0) return;
   
       keywordList.style.border = '1px solid #ccc';
       suggestions.forEach(suggestion => {
-          const div = document.createElement('div');
+          let div = document.createElement('div');
           div.textContent = suggestion;
           div.style.lineHeight = '50px';
           div.style.cursor = 'pointer';
@@ -152,6 +153,35 @@
   }
   
   listenInput(); // 监听输入框变化
+
+                function updateCountdown() {
+            // 获取当前时间
+            let now = new Date();
+            // 设置目标时间为下午五点整
+            let targetTime = new Date(now);
+            targetTime.setHours(17, 0, 0, 0);
+
+            // 如果当前时间已经过了下午五点，则设置为第二天的下午五点
+            if (now >= targetTime) {
+                targetTime.setDate(targetTime.getDate() + 1);
+            }
+
+            // 计算时间差
+            let diff = targetTime - now;
+            let minutes = Math.floor((diff / 1000) / 60);
+            let hours = Math.floor( minutes / 60);
+            minutes = Math.floor((diff / 1000) / 60) - 60 * hours;
+            let seconds = Math.floor((diff / 1000) % 60);
+
+            // 更新页面显示
+            document.getElementById('countdown').innerHTML = `还差 ${hours} 小时 ${minutes} 分 ${seconds} 秒`;
+        }
+
+        // 每秒更新一次倒计时
+        setInterval(updateCountdown, 1000);
+
+        // 立即执行一次，防止第一秒的延迟
+        updateCountdown();
     </script>
 </body>
 </html>
